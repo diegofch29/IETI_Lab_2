@@ -1,13 +1,40 @@
 import React, {Component} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {TodoList} from "./TodoList";
+import {TodoList} from "./components/TodoList.js";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import TodoApp from './components/TodoApp';
 import moment from "moment";
-import './Login.js';
+import {Login} from './components/Login.js';
+import {BrowserRouter as Router, Link, Route} from 'react-router-dom'
+
+
+const LoginView = () => (
+      <Login/>
+  );
+
+const TodoAppView = () => (
+      <TodoApp/>
+  );
+
+localStorage.setItem('isLoggedIn','false');
+var isLoggedIn = false;
+
+localStorage.setItem('user', "diego@gmail.com");
+localStorage.setItem('pass', "123");
+
+
 
 class App extends Component {
+    
+    
+    handleLogin(){
+        if (localStorage.getItem('isLoggedIn') === 'true'){
+            isLoggedIn = true;
+        }
+    }
+    
 
     constructor(props) {
         super(props);
@@ -16,62 +43,29 @@ class App extends Component {
         this.handlePriorityChange = this.handlePriorityChange.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleLogin = this.handleLogin.bind(this);
     }
+    
+    
 
 
     render() {
 
         return (
-            <div className="App">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo"/>
-                    <h1 className="App-title">TODO React App</h1>
-                </header>
+            <Router>
+                <div className="App">
+                    <header className="App-header">
+                        <img src={logo} className="App-logo" alt="logo"/>
+                        <h1 className="App-title">TODO React App</h1>
+                    </header>
 
-                <br/>
-                <br/>
-                <form onSubmit={this.handleSubmit} className="todo-form">
-                    <h3>New TODO</h3>
-                    <label htmlFor="text" className="right-margin">
-                        Text:
-                    </label>
-
-                    <input
-                        id="text"
-                        onChange={this.handleTextChange}
-                        value={this.state.text}>
-                    </input>
-
-                    <br/>
-                    <br/>
-                    <label htmlFor="priority" className="right-margin">
-                        Priority:
-                    </label>
-
-                    <input
-                        id="priority"
-                        type="number"
-                        onChange={this.handlePriorityChange}
-                        value={this.state.priority}>
-                    </input>
-                    <br/>
-                    <br/>
-
-                    <DatePicker
-                        id="due-date"
-                        selected={this.state.dueDate}
-                        placeholderText="Due date"
-                        onChange={this.handleDateChange}>
-                    </DatePicker>
-                    <br/>
-                    <button>
-                        Add #{this.state.items.length + 1}
-                    </button>
-                </form>
-                <br/>
-                <br/>
-                <TodoList todoList={this.state.items}/>
-            </div>
+                    <div>
+                        <Route path="/todo" component={TodoAppView}/>
+                        {!isLoggedIn && (<Route exact path="/" component={LoginView}/>)}
+                        {isLoggedIn && (<Route exact path="/" component={LoginView}/>)}
+                    </div>
+                </div>
+            </Router>
         );
     }
 
@@ -86,12 +80,14 @@ class App extends Component {
             priority: e.target.value
         });
     }
+    
 
     handleDateChange(date) {
         this.setState({
             dueDate: date
         });
     }
+    
 
     handleSubmit(e) {
 

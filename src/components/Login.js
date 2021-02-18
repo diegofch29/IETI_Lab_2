@@ -10,8 +10,28 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import './Login.css'
 
-
+var user,password;
 export class Login extends React.Component{
+    
+    setUser(){
+        user = document.getElementById('email').value;
+    }
+    
+    setPassword(){
+        password = document.getElementById('password').value;
+    }
+    
+    handleLogin = () =>{
+        //alert("Yep, it worked");
+        if (localStorage.getItem('user') === user && localStorage.getItem('pass') === password){
+            localStorage.setItem('isLoggedIn','true');
+            this.handleLogin();
+        }
+        else{
+            alert("Sorry no luck!");
+        }
+    }
+
 
     render(){
         return (
@@ -26,7 +46,7 @@ export class Login extends React.Component{
                         <form className="form">
                             <FormControl margin="normal" required fullWidth>
                                 <InputLabel htmlFor="email">Email Address</InputLabel>
-                                <Input id="email" name="email" autoComplete="email" autoFocus />
+                                <Input id="email" name="email" autoComplete="email" autoFocus onChange={this.setUser}/>
                             </FormControl>
                             <FormControl margin="normal" required fullWidth>
                                 <InputLabel htmlFor="password">Password</InputLabel>
@@ -35,6 +55,7 @@ export class Login extends React.Component{
                                     type="password"
                                     id="password"
                                     autoComplete="current-password"
+                                    onChange ={this.setPassword}
                                 />
                             </FormControl>
                             <Button
@@ -43,6 +64,7 @@ export class Login extends React.Component{
                                 variant="contained"
                                 color="primary"
                                 className="submit"
+                                onClick={this.handleLogin}
                             >
                                 Sign in
                             </Button>
